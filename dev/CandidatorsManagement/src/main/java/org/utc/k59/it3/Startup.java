@@ -5,9 +5,6 @@
  */
 package org.utc.k59.it3;
 
-import org.hibernate.Session;
-import org.utc.k59.it3.utils.HibernateUtil;
-
 /**
  *
  * @author JewCat
