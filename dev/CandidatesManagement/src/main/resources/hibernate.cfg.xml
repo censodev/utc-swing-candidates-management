@@ -25,7 +25,7 @@
         <property name="show_sql">true</property>
 
         <!-- Auto generate tables -->
-        <property name="hbm2ddl.auto">create</property>
+        <property name="hbm2ddl.auto">update</property>
  
         <!-- Entity mapping -->
         <mapping class="org.utc.k59.it3.models.Province" />

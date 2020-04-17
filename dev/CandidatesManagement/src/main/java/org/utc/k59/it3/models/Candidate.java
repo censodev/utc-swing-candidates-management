@@ -18,8 +18,8 @@ import org.utc.k59.it3.utils.Gender;
 @Table(name = "CANDIDATES")
 public class Candidate {
     @Id
-    @TableGenerator(name = "ID_GENERATOR", initialValue = 10000)
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @TableGenerator(name = "HIBERNATE_SEQUENCES", initialValue = 10000)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "HIBERNATE_SEQUENCES")
     @Column(name = "ID")
     private Integer id;
     

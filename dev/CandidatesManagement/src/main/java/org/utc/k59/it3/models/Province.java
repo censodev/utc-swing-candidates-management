@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Table(name = "PROVINCES")
 public class Province {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "HIBERNATE_SEQUENCES")
     @Column(name = "ID")
     private Integer id;
     

@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.Type;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,7 @@ public class DbSeeder {
 
         Type typeToken = new TypeToken<List<CandidateJsonDTO>>(){}.getType();
         List<CandidateJsonDTO> candidatesJson = gson
-                .fromJson(new FileReader("src/main/resources/mock_candidates.json"), typeToken);
+                .fromJson(new FileReader("src/main/resources/mock_candidates_100.json"), typeToken);
         List<Candidate> candidates = candidatesJson.stream()
                 .map(json -> {
                     Candidate candidate = new Candidate();
@@ -38,7 +37,6 @@ public class DbSeeder {
                     candidate.setGender(json.getGender());
                     candidate.setProvinceId(json.getProvinceId());
                     candidate.setBirthDate(Instant.parse(json.getBirthDate()).atZone(ZoneId.systemDefault()).toLocalDate());
-                    System.out.println(candidate.getBirthDate());
                     candidate.setMathMark(json.getMathMark());
                     candidate.setPhysicsMark(json.getPhysicsMark());
                     candidate.setChemistryMark(json.getChemistryMark());
