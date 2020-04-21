@@ -38,7 +38,7 @@ public class Candidate {
     @Column(name = "MATH_MARK")
     private Double mathMark;
     
-    @Column(name = "PHYSICS_MATH")
+    @Column(name = "PHYSICS_MARK")
     private Double physicsMark;
     
     @Column(name = "CHEMISTRY_MARK")

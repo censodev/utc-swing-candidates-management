@@ -1,14 +1,32 @@
 package org.utc.k59.it3.dto;
 
-public class CandidateJsonDTO {
+public class CandidateDTO {
     private Integer id;
     private String name;
-    private Integer provinceId;
+    private String provinceName;
     private String birthDate;
     private String gender;
     private Double mathMark;
     private Double physicsMark;
     private Double chemistryMark;
+
+    public CandidateDTO(Integer id,
+                        String name,
+                        String provinceName,
+                        String birthDate,
+                        String gender,
+                        Double mathMark,
+                        Double physicsMark,
+                        Double chemistryMark) {
+        this.id = id;
+        this.name = name;
+        this.provinceName = provinceName;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.mathMark = mathMark;
+        this.physicsMark = physicsMark;
+        this.chemistryMark = chemistryMark;
+    }
 
     public Integer getId() {
         return id;
@@ -26,12 +44,12 @@ public class CandidateJsonDTO {
         this.name = name;
     }
 
-    public Integer getProvinceId() {
-        return provinceId;
+    public String getProvinceName() {
+        return provinceName;
     }
 
-    public void setProvinceId(Integer provinceId) {
-        this.provinceId = provinceId;
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
     }
 
     public String getBirthDate() {
