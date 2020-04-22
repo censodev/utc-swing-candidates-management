@@ -9,6 +9,11 @@ import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Properties;
+
 /**
  *
  * @author JewCat
@@ -19,16 +24,24 @@ public class HibernateUtil {
     private static SessionFactory buildSessionFactory() {
         try {
             // load from different directory
+            Properties properties = new Properties();
+            properties.load(new FileReader("etc/application.properties"));
+
             SessionFactory sessionFactory = new Configuration()
                     .configure()
+                    .setProperty("hibernate.connection.url", properties.getProperty("hibernate.connection.url"))
+                    .setProperty("hibernate.connection.username", properties.getProperty("hibernate.connection.username"))
+                    .setProperty("hibernate.connection.password", properties.getProperty("hibernate.connection.password"))
                     .buildSessionFactory();
 
             return sessionFactory;
 
-        } catch (HibernateException ex) {
-            // Make sure you log the exception, as it might be swallowed
+        } catch (HibernateException | FileNotFoundException ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

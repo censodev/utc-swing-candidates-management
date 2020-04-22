@@ -5,9 +5,9 @@
     <session-factory>
         <!-- Database setting -->
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="connection.url">jdbc:mysql://localhost:3308/utc_candidates_management_db?serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=utf8</property>
-        <property name="connection.username">root</property>
-        <property name="connection.password"></property>
+<!--        <property name="connection.url">jdbc:mysql://localhost:3308/utc_candidates_management_db?serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=utf8</property>-->
+<!--        <property name="connection.username">root</property>-->
+<!--        <property name="connection.password"></property>-->
          
         <!-- JDBC connection pool (use the built-in) -->
         <property name="connection.pool_size">4</property>
@@ -27,7 +27,7 @@
         <!-- Auto generate tables -->
         <property name="hbm2ddl.auto">update</property>
  
-        <!-- Entity mapping -->
+        <!-- Entities mapping -->
         <mapping class="org.utc.k59.it3.models.Province" />
         <mapping class="org.utc.k59.it3.models.Candidate" />
          
