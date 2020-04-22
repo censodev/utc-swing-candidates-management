@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 
 public class DbSeeder {
     public static void seedAll() throws FileNotFoundException {
+        if (ServicesManager.provinceRepository.find(1) != null)
+            return;
         seedProvinces();
         seedCandidate();
     }
@@ -25,7 +27,7 @@ public class DbSeeder {
     public static void seedCandidate() throws FileNotFoundException {
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd HH:mm:ss")
-                .create();;
+                .create();
 
         Type typeToken = new TypeToken<List<CandidateJsonDTO>>(){}.getType();
         List<CandidateJsonDTO> candidatesJson = gson

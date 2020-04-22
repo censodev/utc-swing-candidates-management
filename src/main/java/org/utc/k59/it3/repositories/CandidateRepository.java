@@ -5,12 +5,15 @@
  */
 package org.utc.k59.it3.repositories;
 
+import org.utc.k59.it3.dto.CandidateDTO;
 import org.utc.k59.it3.models.Candidate;
+
+import java.util.List;
 
 /**
  *
  * @author JewCat
  */
 public interface CandidateRepository extends CrudRepository<Candidate> {
-
+    List<CandidateDTO> findByProvince(Integer provinceId);
 }
