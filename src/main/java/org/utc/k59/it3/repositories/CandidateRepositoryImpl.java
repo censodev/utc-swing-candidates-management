@@ -6,15 +6,11 @@
 package org.utc.k59.it3.repositories;
 
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.utc.k59.it3.dto.CandidateDTO;
 import org.utc.k59.it3.models.Candidate;
 import org.utc.k59.it3.utils.HibernateUtil;
 
-import javax.persistence.Query;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +45,7 @@ public class CandidateRepositoryImpl extends CrudRepositoryImpl<Candidate> imple
             ss.beginTransaction();
             Query query = ss.createQuery(sb.toString());
             query.setParameter("provinceId", provinceId);
-            List<Object[]> rs = query.getResultList();
+            List<Object[]> rs = query.list();
             ss.getTransaction().commit();
 
             List<CandidateDTO> candidateDTOList = new ArrayList<>();

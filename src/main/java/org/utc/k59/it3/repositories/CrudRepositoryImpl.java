@@ -1,5 +1,6 @@
 package org.utc.k59.it3.repositories;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.utc.k59.it3.utils.HibernateUtil;
 
@@ -20,7 +21,7 @@ public abstract class CrudRepositoryImpl<E> implements CrudRepository<E> {
             rs = session.createQuery("FROM ".concat(clazz.getName()), clazz).list();
             session.getTransaction().commit();
             return rs;
-        } catch (Exception ex) {
+        } catch (HibernateException ex) {
             System.out.println(ex.getMessage());
             return null;
         }
@@ -30,7 +31,7 @@ public abstract class CrudRepositoryImpl<E> implements CrudRepository<E> {
     public E find(Integer id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.find(clazz, id);
-        } catch (Exception ex) {
+        } catch (HibernateException ex) {
             System.out.println(ex.getMessage());
             return null;
         }
@@ -42,7 +43,7 @@ public abstract class CrudRepositoryImpl<E> implements CrudRepository<E> {
             session.beginTransaction();
             session.save(entity);
             session.getTransaction().commit();
-        } catch (Exception ex) {
+        } catch (HibernateException ex) {
             System.out.println(ex.getMessage());
         }
     }
@@ -53,7 +54,7 @@ public abstract class CrudRepositoryImpl<E> implements CrudRepository<E> {
             session.beginTransaction();
             entities.forEach(session::save);
             session.getTransaction().commit();
-        } catch (Exception ex) {
+        } catch (HibernateException ex) {
             System.out.println(ex.getMessage());
         }
     }
@@ -64,7 +65,7 @@ public abstract class CrudRepositoryImpl<E> implements CrudRepository<E> {
             session.beginTransaction();
             session.update(entity);
             session.getTransaction().commit();
-        } catch (Exception ex) {
+        } catch (HibernateException ex) {
             System.out.println(ex.getMessage());
         }
     }
@@ -75,7 +76,7 @@ public abstract class CrudRepositoryImpl<E> implements CrudRepository<E> {
             session.beginTransaction();
             entities.forEach(session::update);
             session.getTransaction().commit();
-        } catch (Exception ex) {
+        } catch (HibernateException ex) {
             System.out.println(ex.getMessage());
         }
     }
@@ -86,7 +87,7 @@ public abstract class CrudRepositoryImpl<E> implements CrudRepository<E> {
             session.beginTransaction();
             session.delete(entity);
             session.getTransaction().commit();
-        } catch (Exception ex) {
+        } catch (HibernateException ex) {
             System.out.println(ex.getMessage());
         }
     }
@@ -97,7 +98,7 @@ public abstract class CrudRepositoryImpl<E> implements CrudRepository<E> {
             session.beginTransaction();
             entities.forEach(session::delete);
             session.getTransaction().commit();
-        } catch (Exception ex) {
+        } catch (HibernateException ex) {
             System.out.println(ex.getMessage());
         }
     }
