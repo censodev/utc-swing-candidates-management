@@ -16,4 +16,6 @@ import java.util.List;
  */
 public interface CandidateRepository extends CrudRepository<Candidate> {
     List<CandidateDTO> findByProvince(Integer provinceId);
+    List<CandidateDTO> getListCandidates();
+    CandidateDTO getCandidate(Integer id);
 }
