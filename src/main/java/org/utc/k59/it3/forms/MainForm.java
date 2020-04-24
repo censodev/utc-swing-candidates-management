@@ -129,6 +129,7 @@ public class MainForm {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Integer idinput= Integer.valueOf(txtIdInput.getText());
+
                     String birthplace = String.valueOf(cmbBirthPlace.getSelectedItem());
                     CandidateDTO candidate = ServicesManager.candidateRepository.getCandidate(idinput);
 
