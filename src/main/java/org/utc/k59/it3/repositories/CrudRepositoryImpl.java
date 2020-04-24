@@ -38,13 +38,15 @@ public abstract class CrudRepositoryImpl<E> implements CrudRepository<E> {
     }
 
     @Override
-    public void save(E entity) {
+    public Object save(E entity) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
-            session.save(entity);
+            Object identifier = session.save(entity);
             session.getTransaction().commit();
+            return identifier;
         } catch (HibernateException ex) {
             System.out.println(ex.getMessage());
+            return null;
         }
     }
 

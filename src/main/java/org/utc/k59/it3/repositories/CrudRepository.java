@@ -7,7 +7,7 @@ public interface CrudRepository<E> {
 
     E find(Integer id);
 
-    void save(E entity);
+    Object save(E entity);
 
     void save(List<E> entities);
 
