@@ -6,6 +6,8 @@ import org.utc.k59.it3.models.Province;
 import org.utc.k59.it3.utils.ServicesManager;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,6 +37,8 @@ public class MainForm {
     private JComboBox cmbBirthPlaceOutput;
 
     public MainForm() {
+
+        JOptionPane jOptionPane= new JOptionPane();
         ButtonGroup G = new ButtonGroup();
         G.add(RB_Famale);
         G.add(RB_male);
@@ -59,6 +63,44 @@ public class MainForm {
                             c.getId(), c.getName(), c.getProvinceName(), c.getBirthDate(), c.getGender(),
                             c.getMathMark(), c.getPhysicsMark(), c.getChemistryMark(),(double) Math.round(c.getTotalMark() * 10) / 10
                     });
+
+
+            ListSelectionModel listSelectionModel= table.getSelectionModel();
+
+            listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+            listSelectionModel.addListSelectionListener(new ListSelectionListener() {
+                @Override
+                public void valueChanged(ListSelectionEvent e) {
+                    int[]  rows = table.getSelectedRows();
+                    int[]  cols = table.getSelectedColumns();
+                    Integer code =Integer.valueOf((Integer) table.getValueAt(rows[0],0));
+                    CandidateDTO candidate = ServicesManager.candidateRepository.getCandidate(code);
+                    txtIdOutput.setText(String.valueOf(candidate.getId()));
+                    txtChemistry.setText(String.valueOf(candidate.getChemistryMark()));
+                    txtPhysical.setText(String.valueOf(candidate.getPhysicsMark()));
+                    txtMath.setText(String.valueOf(candidate.getMathMark()));
+
+                    Double  C= Double.valueOf(candidate.getChemistryMark());
+                    Double  P = Double.valueOf(candidate.getPhysicsMark());
+                    Double  M = Double.valueOf(candidate.getMathMark());
+                    Double  total1= C+M+P;
+                    txtTotal.setText(String.valueOf((double) Math.round(total1 * 10) / 10));
+
+                    txtName.setText(String.valueOf(candidate.getName()));
+                    txtDate.setText(String.valueOf(candidate.getBirthDate()));
+
+                    if (candidate.getGender().equals("F")){
+                        RB_Famale.setSelected(true);
+                    }
+                    else RB_male.setSelected(true);
+
+                    cmbBirthPlaceOutput.setSelectedItem(candidate.getProvinceName());
+
+
+                }
+            });
+
         });
 
         List<Province> provinceList = ServicesManager.provinceRepository.findAll();
@@ -103,20 +145,25 @@ public class MainForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-
-                    Integer id = Integer.valueOf(txt_ID_Input.getText());
-                    //if id ==null dialog"nhap sdasdsadsa"
+                    Integer idinput= Integer.valueOf(txt_ID_Input.getText());
                     String birthplace = String.valueOf(cmbBirthPlace.getSelectedItem());
-                    CandidateDTO candidate = ServicesManager.candidateRepository.getCandidate(id);
+                    CandidateDTO candidate = ServicesManager.candidateRepository.getCandidate(idinput);
+
                     if (candidate == null) {
-                        // mo dialog
+                       JOptionPane.showMessageDialog(null, "ID bạn vừa nhập không tồn tại "+idinput);
                         return;
                     }
                     txtIdOutput.setText(String.valueOf(candidate.getId()));
                     txtChemistry.setText(String.valueOf(candidate.getChemistryMark()));
                     txtPhysical.setText(String.valueOf(candidate.getPhysicsMark()));
                     txtMath.setText(String.valueOf(candidate.getMathMark()));
-                    txtTotal.setText(String.valueOf(candidate.getPhysicsMark()+candidate.getChemistryMark()+candidate.getMathMark()));
+
+                    Double  C= Double.valueOf(candidate.getChemistryMark());
+                    Double  P = Double.valueOf(candidate.getPhysicsMark());
+                    Double  M = Double.valueOf(candidate.getMathMark());
+                    Double  total1= C+M+P;
+                    txtTotal.setText(String.valueOf((double) Math.round(total1 * 10) / 10));
+
                     txtName.setText(String.valueOf(candidate.getName()));
                     txtDate.setText(String.valueOf(candidate.getBirthDate()));
                     if (candidate.getGender().equals("F")){
@@ -128,7 +175,7 @@ public class MainForm {
 
                 } catch (Exception ex) {
                     System.err.println(ex.getMessage());
-                    // mo dialog bao loi
+                    JOptionPane.showMessageDialog(null," Mời bạn nhập ID với giá trị [10000,10100]");
                 }
 
 
@@ -142,7 +189,7 @@ public class MainForm {
         frame.setContentPane(new MainForm().mainPanel);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
-            frame.setSize(1200,768);
+        frame.setSize(1200,768);
         frame.setVisible(true);
     }
 }
