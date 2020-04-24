@@ -50,12 +50,14 @@
         </constraints>
         <properties>
           <foreground color="-16777216"/>
-          <text value="Sex"/>
+          <text value="Gender"/>
         </properties>
       </component>
       <component id="c37c8" class="javax.swing.JLabel">
         <constraints>
-          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="10" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="10" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="70" height="21"/>
+          </grid>
         </constraints>
         <properties>
           <background color="-12503016"/>
@@ -112,6 +114,7 @@
         </constraints>
         <properties>
           <text value=""/>
+          <toolTipText value="dd/mm/yyyy"/>
         </properties>
       </component>
       <grid id="cc285" layout-manager="GridLayoutManager" row-count="2" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -138,6 +141,7 @@
             <properties>
               <foreground color="-16777216"/>
               <text value="Insert"/>
+              <toolTipText value="ấn zô đây để nhận quà"/>
             </properties>
           </component>
           <component id="738e" class="javax.swing.JButton" binding="btnOK">
@@ -273,7 +277,7 @@
         <border type="none"/>
         <children/>
       </grid>
-      <component id="41d66" class="javax.swing.JTextField" binding="txt_ID_Input">
+      <component id="41d66" class="javax.swing.JTextField" binding="txtIdInput">
         <constraints>
           <grid row="2" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="31"/>
@@ -320,7 +324,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="4e1bf" class="javax.swing.JRadioButton" binding="RB_male">
+          <component id="4e1bf" class="javax.swing.JRadioButton" binding="rbMale">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -328,7 +332,7 @@
               <text value="Male"/>
             </properties>
           </component>
-          <component id="b54d5" class="javax.swing.JRadioButton" binding="RB_Famale">
+          <component id="b54d5" class="javax.swing.JRadioButton" binding="reFemale">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -358,16 +362,20 @@
         <constraints>
           <grid row="4" column="1" row-span="1" col-span="12" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <foreground color="-16777216"/>
+        </properties>
         <border type="none"/>
         <children>
           <component id="c6bcf" class="javax.swing.JTable" binding="table">
             <constraints/>
             <properties>
+              <background color="-590593"/>
               <foreground color="-16777216"/>
-              <gridColor color="-16711690"/>
-              <selectionBackground color="-5274097"/>
-              <selectionForeground color="-4521844"/>
+              <gridColor color="-16777216"/>
+              <inheritsPopupMenu value="false"/>
+              <selectionBackground color="-3487030"/>
+              <selectionForeground color="-16777216"/>
             </properties>
           </component>
         </children>

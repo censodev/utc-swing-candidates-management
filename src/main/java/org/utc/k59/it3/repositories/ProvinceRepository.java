@@ -12,5 +12,5 @@ import org.utc.k59.it3.models.Province;
  * @author JewCat
  */
 public interface ProvinceRepository extends CrudRepository<Province> {
-    
+    Province findByName(String provinceName);
 }

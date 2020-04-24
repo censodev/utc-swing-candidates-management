@@ -90,7 +90,7 @@ public class Candidate {
 
     public void setMathMark(Double mathMark) {
         if (!isValidMark(mathMark))
-            this.mathMark = null;
+            throw new NumberFormatException();
         else
             this.mathMark = mathMark;
     }
@@ -101,7 +101,7 @@ public class Candidate {
 
     public void setPhysicsMark(Double physicsMark) {
         if (!isValidMark(physicsMark))
-            this.physicsMark = null;
+            throw new NumberFormatException();
         else
             this.physicsMark = physicsMark;
     }
@@ -112,7 +112,7 @@ public class Candidate {
 
     public void setChemistryMark(Double chemistryMark) {
         if (!isValidMark(chemistryMark))
-            this.chemistryMark = null;
+            throw new NumberFormatException();
         else
             this.chemistryMark = chemistryMark;
     }
