@@ -12,8 +12,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class MainForm {
     private JPanel mainPanel;
@@ -37,12 +39,11 @@ public class MainForm {
     private JComboBox cmbBirthPlace;
     private JComboBox cmbBirthPlaceOutput;
 
-    private Integer currentRowInTable = null;
+    private DefaultTableModel defaultTableModel;
 
     public MainForm() {
         txtDate.setText("dd/mm/yyyy");
 
-        JOptionPane jOptionPane= new JOptionPane();
         ButtonGroup G = new ButtonGroup();
         G.add(reFemale);
         G.add(rbMale);
@@ -54,6 +55,7 @@ public class MainForm {
         DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
         cmbBirthPlace.setModel(defaultComboBoxModel1);
+        defaultComboBoxModel1.addElement("");
         cmbBirthPlaceOutput.setModel(defaultComboBoxModel2);
         provinceList.stream().map(p -> p.getName()).forEach(ps -> {
             defaultComboBoxModel1.addElement(ps);
@@ -66,8 +68,9 @@ public class MainForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+                    // get data from text field
                     String dateString = txtDate.getText();
-                    int[] dateArray = Arrays.stream(dateString.split("/")).mapToInt(str -> Integer.valueOf(str)).toArray();
+                    int[] dateArray = Arrays.stream(dateString.split("/")).mapToInt(Integer::valueOf).toArray();
                     LocalDate date = LocalDate.of(dateArray[2], dateArray[1], dateArray[0]);
 
                     String name = txtName.getText();
@@ -76,8 +79,9 @@ public class MainForm {
                     Double  chemistry = Double.valueOf(txtChemistry.getText());
                     Double  physics = Double.valueOf(txtPhysical.getText());
                     Double  math = Double.valueOf(txtMath.getText());
-                    String gender = reFemale.isSelected()? Gender.FEMALE:Gender.MALE;
+                    String gender = reFemale.isSelected() ? Gender.FEMALE : Gender.MALE;
 
+                    // add to DB
                     Candidate candidate = new Candidate();
                     candidate.setName(name);
                     candidate.setMathMark(math);
@@ -86,23 +90,14 @@ public class MainForm {
                     candidate.setProvinceId(provinceId);
                     candidate.setGender(gender);
                     candidate.setBirthDate(date);
-                    Integer id = (Integer) ServicesManager.candidateRepository.save(candidate);
+                    ServicesManager.candidateRepository.save(candidate);
 
-                    ((DefaultTableModel)table.getModel()).addRow(new Object[] {
-                            id, candidate.getName(), provinceName, dateString, gender,
-                            candidate.getMathMark(), candidate.getPhysicsMark(), candidate.getChemistryMark(),
-                            (double) Math.round((candidate.getMathMark() + candidate.getPhysicsMark() + candidate.getChemistryMark()) * 10) / 10
-                    });
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null,"Vui lòng nhập laị giá trị ");
+                    List<CandidateDTO> candidateDTOList = ServicesManager.candidateRepository.getListCandidates();
+                    refreshTable(candidateDTOList);
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null,"Vui lòng điền đầy đủ thông tin thí sinh");
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
-
-
-
-
-
             }
         });
         btnEdit.addActionListener(new ActionListener() {
@@ -123,65 +118,46 @@ public class MainForm {
 
             }
         });
-        boolean flag= true;
+
         btnFilter.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Integer idinput= Integer.valueOf(txtIdInput.getText());
-
+                    String selectedId = txtIdInput.getText();
                     String birthplace = String.valueOf(cmbBirthPlace.getSelectedItem());
-                    CandidateDTO candidate = ServicesManager.candidateRepository.getCandidate(idinput);
 
-                    if (candidate == null) {
-                       JOptionPane.showMessageDialog(null, "ID bạn vừa nhập không tồn tại "+idinput);
-                        return;
-                    }
-                    txtIdOutput.setText(String.valueOf(candidate.getId()));
-                    txtChemistry.setText(String.valueOf(candidate.getChemistryMark()));
-                    txtPhysical.setText(String.valueOf(candidate.getPhysicsMark()));
-                    txtMath.setText(String.valueOf(candidate.getMathMark()));
+                    List<CandidateDTO> candidateDTOList = new ArrayList<>();
 
-                    Double  C= Double.valueOf(candidate.getChemistryMark());
-                    Double  P = Double.valueOf(candidate.getPhysicsMark());
-                    Double  M = Double.valueOf(candidate.getMathMark());
-                    Double  total1= C+M+P;
-                    txtTotal.setText(String.valueOf((double) Math.round(total1 * 10) / 10));
-
-                    txtName.setText(String.valueOf(candidate.getName()));
-                    txtDate.setText(String.valueOf(candidate.getBirthDate()));
-                    if (candidate.getGender().equals("F")){
-                        reFemale.setSelected(true);
-                    }
-                    else rbMale.setSelected(true);
-
-                    cmbBirthPlaceOutput.setSelectedItem(candidate.getProvinceName());
-
+                    if (!selectedId.equals(""))
+                        candidateDTOList.add(ServicesManager.candidateRepository.getCandidate(Integer.parseInt(selectedId)));
+                    else if (!birthplace.equals(""))
+                        candidateDTOList.addAll(ServicesManager.candidateRepository.findByProvince(birthplace));
+                    else
+                        candidateDTOList = ServicesManager.candidateRepository.getListCandidates();
+                    refreshTable(candidateDTOList);
                 } catch (Exception ex) {
-                    System.err.println(ex.getMessage());
-                    JOptionPane.showMessageDialog(null," Mời bạn nhập ID ");
+                    JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
-
-
-
             }
         });
-
 
         btnDelete.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                Integer idoutput = Integer.valueOf(txtIdOutput.getText());
-                Candidate candidate = ServicesManager.candidateRepository.find(idoutput);
-                    ((DefaultTableModel)table.getModel()).removeRow(currentRowInTable);
-                    JOptionPane.showMessageDialog(null,"Đã xóa dữ liệu thành công");
-                    ServicesManager.candidateRepository.delete(candidate);
+                int rowSelected = table.getSelectedRows()[0];
+                Integer selectedId = (Integer) table.getValueAt(rowSelected,0);
 
+                // delete in DB
+                Candidate candidate = ServicesManager.candidateRepository.find(selectedId);
+                ServicesManager.candidateRepository.delete(candidate);
 
+                // re-render table
+                List<CandidateDTO> candidateDTOList = ServicesManager.candidateRepository.getListCandidates();
+                refreshTable(candidateDTOList);
+
+                // dialog
+                JOptionPane.showMessageDialog(null,"Đã xóa dữ liệu thành công");
             }
-        });
-        txtDate.addFocusListener(new FocusAdapter() {
         });
     }
 
@@ -195,7 +171,7 @@ public class MainForm {
     }
 
     private void renderTable() {
-        DefaultTableModel defaultTableModel = new DefaultTableModel();
+        defaultTableModel = new DefaultTableModel();
         table.setModel(defaultTableModel);
         defaultTableModel.addColumn("UID ");
         defaultTableModel.addColumn("NAME");
@@ -207,53 +183,52 @@ public class MainForm {
         defaultTableModel.addColumn("CHEMISTRY");
         defaultTableModel.addColumn("TOTAL");
 
-        List<CandidateDTO> candidateDTOList = ServicesManager.candidateRepository.getListCandidates();
+        setDataSource(ServicesManager.candidateRepository.getListCandidates());
 
-        candidateDTOList.forEach(c -> {
-            defaultTableModel
-                    .addRow(new Object[] {
-                            c.getId(), c.getName(), c.getProvinceName(), c.getBirthDate(), c.getGender(),
-                            c.getMathMark(), c.getPhysicsMark(), c.getChemistryMark(),(double) Math.round(c.getTotalMark() * 10) / 10
-                    });
-        });
-
-        ListSelectionModel listSelectionModel= table.getSelectionModel();
+        ListSelectionModel listSelectionModel = table.getSelectionModel();
 
         listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         listSelectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                int[]  rows = table.getSelectedRows();
-                int[]  cols = table.getSelectedColumns();
-                currentRowInTable = rows[0];
-                Integer code =Integer.valueOf((Integer) table.getValueAt(rows[0],0));
-
-                CandidateDTO candidate = ServicesManager.candidateRepository.getCandidate(code);
-                txtIdOutput.setText(String.valueOf(candidate.getId()));
-                txtChemistry.setText(String.valueOf(candidate.getChemistryMark()));
-                txtPhysical.setText(String.valueOf(candidate.getPhysicsMark()));
-                txtMath.setText(String.valueOf(candidate.getMathMark()));
-
-                Double  C= Double.valueOf(candidate.getChemistryMark());
-                Double  P = Double.valueOf(candidate.getPhysicsMark());
-                Double  M = Double.valueOf(candidate.getMathMark());
-                Double  total1= C+M+P;
-                txtTotal.setText(String.valueOf((double) Math.round(total1 * 10) / 10));
-
-                txtName.setText(String.valueOf(candidate.getName()));
-                txtDate.setText(String.valueOf(candidate.getBirthDate()));
-
-                if (candidate.getGender().equals("F")){
-                    reFemale.setSelected(true);
-                }
-                else rbMale.setSelected(true);
-
-                cmbBirthPlaceOutput.setSelectedItem(candidate.getProvinceName());
-
-
+                Integer selectedId = (Integer) table.getValueAt(table.getSelectedRows()[0],0);
+                CandidateDTO candidateDTO = ServicesManager.candidateRepository.getCandidate(selectedId);
+                fillCandidateDetails(candidateDTO);
             }
         });
 
+    }
+
+    private void setDataSource(List<CandidateDTO> dataSource) {
+        dataSource.forEach(c -> {
+            defaultTableModel
+                    .addRow(new Object[] {
+                            c.getId(), c.getName(), c.getProvinceName(), c.getBirthDate(), c.getGender(),
+                            c.getMathMark(), c.getPhysicsMark(), c.getChemistryMark(),(double) Math.round(c.getTotalMark() * 10) / 10
+                    });
+        });
+    }
+
+    private void refreshTable(List<CandidateDTO> dataSource){
+        defaultTableModel.setRowCount(0);
+        setDataSource(dataSource);
+    }
+
+    private void fillCandidateDetails(CandidateDTO candidateDTO) {
+        txtIdOutput.setText(String.valueOf(candidateDTO.getId()));
+        txtName.setText(String.valueOf(candidateDTO.getName()));
+        txtDate.setText(String.valueOf(candidateDTO.getBirthDate()));
+        txtMath.setText(String.valueOf(candidateDTO.getMathMark()));
+        txtPhysical.setText(String.valueOf(candidateDTO.getPhysicsMark()));
+        txtChemistry.setText(String.valueOf(candidateDTO.getChemistryMark()));
+        txtTotal.setText(String.valueOf((double) Math.round(candidateDTO.getTotalMark() * 10) / 10));
+
+        if (candidateDTO.getGender().equals("F"))
+            reFemale.setSelected(true);
+        else
+            rbMale.setSelected(true);
+
+        cmbBirthPlaceOutput.setSelectedItem(candidateDTO.getProvinceName());
     }
 }

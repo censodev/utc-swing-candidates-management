@@ -31,20 +31,20 @@ public class CandidateRepositoryImpl extends CrudRepositoryImpl<Candidate> imple
     }
 
     @Override
-    public List<CandidateDTO> findByProvince(Integer provinceId) {
+    public List<CandidateDTO> findByProvince(String provinceName) {
         Session ss = null;
 
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT c.id, c.name, p.name, c.birthDate, c.gender, c.mathMark, c.physicsMark, c.chemistryMark, ");
         sb.append("c.mathMark + c.physicsMark + c.chemistryMark \n");
         sb.append("FROM Candidate c JOIN Province p ON c.provinceId = p.id \n");
-        sb.append("WHERE p.id = :provinceId");
+        sb.append("WHERE p.name = :provinceName");
         System.out.println(sb.toString());
         try {
             ss = HibernateUtil.getSessionFactory().openSession();
             ss.beginTransaction();
             Query query = ss.createQuery(sb.toString());
-            query.setParameter("provinceId", provinceId);
+            query.setParameter("provinceName", provinceName);
             List<Object[]> rs = query.list();
             ss.getTransaction().commit();
 
