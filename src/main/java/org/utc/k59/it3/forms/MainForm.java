@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class MainForm {
     private JPanel mainPanel;
@@ -40,6 +39,7 @@ public class MainForm {
     private JComboBox cmbBirthPlaceOutput;
 
     private DefaultTableModel defaultTableModel;
+    private List<CandidateDTO> dataSource;
 
     public MainForm() {
         txtDate.setText("dd/mm/yyyy");
@@ -64,7 +64,6 @@ public class MainForm {
 
 
         btnInsert.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -90,10 +89,11 @@ public class MainForm {
                     candidate.setProvinceId(provinceId);
                     candidate.setGender(gender);
                     candidate.setBirthDate(date);
-                    ServicesManager.candidateRepository.save(candidate);
+                    Integer id = (Integer) ServicesManager.candidateRepository.save(candidate);
 
-                    List<CandidateDTO> candidateDTOList = ServicesManager.candidateRepository.getListCandidates();
-                    refreshTable(candidateDTOList);
+                    // refresh frame
+                    dataSource = ServicesManager.candidateRepository.getListCandidates();
+                    refreshTable(dataSource);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -103,7 +103,35 @@ public class MainForm {
         btnEdit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // get data from text field
+                String dateString = txtDate.getText();
+                int[] dateArray = Arrays.stream(dateString.split("/")).mapToInt(Integer::valueOf).toArray();
+                LocalDate date = LocalDate.of(dateArray[2], dateArray[1], dateArray[0]);
 
+                Integer id = (Integer) table.getValueAt(table.getSelectedRow(), 0);
+                String name = txtName.getText();
+                String provinceName = String.valueOf(cmbBirthPlaceOutput.getSelectedItem());
+                Integer provinceId = ServicesManager.provinceRepository.findByName(provinceName).getId();
+                Double  chemistry = Double.valueOf(txtChemistry.getText());
+                Double  physics = Double.valueOf(txtPhysical.getText());
+                Double  math = Double.valueOf(txtMath.getText());
+                String gender = reFemale.isSelected() ? Gender.FEMALE : Gender.MALE;
+
+                // update DB
+                Candidate candidate = new Candidate();
+                candidate.setId(id);
+                candidate.setName(name);
+                candidate.setMathMark(math);
+                candidate.setChemistryMark(chemistry);
+                candidate.setPhysicsMark(physics);
+                candidate.setProvinceId(provinceId);
+                candidate.setGender(gender);
+                candidate.setBirthDate(date);
+                ServicesManager.candidateRepository.update(candidate);
+
+                // refresh frame
+                dataSource = ServicesManager.candidateRepository.getListCandidates();
+                refreshTable(dataSource);
             }
         });
         btnOK.addActionListener(new ActionListener() {
@@ -134,8 +162,12 @@ public class MainForm {
                         candidateDTOList.addAll(ServicesManager.candidateRepository.findByProvince(birthplace));
                     else
                         candidateDTOList = ServicesManager.candidateRepository.getListCandidates();
-                    refreshTable(candidateDTOList);
+
+                    // refresh frame
+                    dataSource = candidateDTOList;
+                    refreshTable(dataSource);
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
             }
@@ -144,19 +176,19 @@ public class MainForm {
         btnDelete.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int rowSelected = table.getSelectedRows()[0];
-                Integer selectedId = (Integer) table.getValueAt(rowSelected,0);
+            int rowSelected = table.getSelectedRow();
+            Integer selectedId = (Integer) table.getValueAt(rowSelected,0);
 
-                // delete in DB
-                Candidate candidate = ServicesManager.candidateRepository.find(selectedId);
-                ServicesManager.candidateRepository.delete(candidate);
+            // delete in DB
+            Candidate candidate = ServicesManager.candidateRepository.find(selectedId);
+            ServicesManager.candidateRepository.delete(candidate);
 
-                // re-render table
-                List<CandidateDTO> candidateDTOList = ServicesManager.candidateRepository.getListCandidates();
-                refreshTable(candidateDTOList);
+            // refresh frame
+            dataSource = ServicesManager.candidateRepository.getListCandidates();
+            refreshTable(dataSource);
 
-                // dialog
-                JOptionPane.showMessageDialog(null,"Đã xóa dữ liệu thành công");
+            // dialog
+            JOptionPane.showMessageDialog(null,"Đã xóa dữ liệu thành công");
             }
         });
     }
@@ -183,21 +215,21 @@ public class MainForm {
         defaultTableModel.addColumn("CHEMISTRY");
         defaultTableModel.addColumn("TOTAL");
 
-        setDataSource(ServicesManager.candidateRepository.getListCandidates());
+        dataSource = ServicesManager.candidateRepository.getListCandidates();
+        setDataSource(dataSource);
 
-        ListSelectionModel listSelectionModel = table.getSelectionModel();
-
-        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        listSelectionModel.addListSelectionListener(new ListSelectionListener() {
+        table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                Integer selectedId = (Integer) table.getValueAt(table.getSelectedRows()[0],0);
-                CandidateDTO candidateDTO = ServicesManager.candidateRepository.getCandidate(selectedId);
-                fillCandidateDetails(candidateDTO);
+                try {
+                    CandidateDTO candidateDTO = dataSource.get(e.getLastIndex());
+                    fillCandidateDetails(candidateDTO);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
-
     }
 
     private void setDataSource(List<CandidateDTO> dataSource) {
@@ -210,7 +242,8 @@ public class MainForm {
         });
     }
 
-    private void refreshTable(List<CandidateDTO> dataSource){
+    private void refreshTable(List<CandidateDTO> dataSource) {
+        table.clearSelection();
         defaultTableModel.setRowCount(0);
         setDataSource(dataSource);
     }
