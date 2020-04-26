@@ -64,7 +64,7 @@
 {"name":"Trần Châu Bảo","provinceId":52,"birthDate":"2002-06-20T09:26:24Z","gender":"M","mathMark":4.0,"physicsMark":9.8,"chemistryMark":2.0},
 {"name":"Châu Bảo Ngọc","provinceId":59,"birthDate":"2002-11-30T15:40:08Z","gender":"M","mathMark":2.3,"physicsMark":9.5,"chemistryMark":5.3},
 {"name":"Nguyễn Mai Lê","provinceId":15,"birthDate":"2002-04-20T21:41:10Z","gender":"F","mathMark":7.4,"physicsMark":4.9,"chemistryMark":5.2},
-{"name":" Nguyễn Hải Đăng ","provinceId":26,"birthDate":"2002-04-12T22:29:11Z","gender":"F","mathMark":2.2,"physicsMark":5.6,"chemistryMark":1.7},
+{"name":" Nguyễn Hải Đăng ","provinceId":62,"birthDate":"2002-02-19T22:29:11Z","gender":"F","mathMark":9.0,"physicsMark":9.0,"chemistryMark":9.0},
 {"name":"Võ Việt Hản","provinceId":36,"birthDate":"2002-01-13T03:13:58Z","gender":"F","mathMark":7.8,"physicsMark":8.0,"chemistryMark":4.4},
 {"name":"Lục Kim Ngọc","provinceId":5,"birthDate":"2002-11-10T10:09:52Z","gender":"M","mathMark":4.6,"physicsMark":1.8,"chemistryMark":8.8},
 {"name":"Ngô Hồng Nhung","provinceId":49,"birthDate":"2002-04-19T00:38:02Z","gender":"F","mathMark":4.4,"physicsMark":6.7,"chemistryMark":1.0},
@@ -95,6 +95,6 @@
 {"name":"Lê Hạ Lam","provinceId":62,"birthDate":"2002-09-28T12:38:10Z","gender":"F","mathMark":3.6,"physicsMark":6.3,"chemistryMark":2.8},
 {"name":"Đại Văn Đức","provinceId":22,"birthDate":"2002-03-05T09:22:14Z","gender":"M","mathMark":9.8,"physicsMark":6.7,"chemistryMark":5.1},
 {"name":"Bùi Như Lạc","provinceId":13,"birthDate":"2002-01-16T01:26:27Z","gender":"F","mathMark":6.0,"physicsMark":8.5,"chemistryMark":4.6},
-{"name":"Phùng Thanh ĐỘ","provinceId":4,"birthDate":"2002-07-14T20:37:27Z","gender":"F","mathMark":5.7,"physicsMark":4.9,"chemistryMark":2.2},
+{"name":"Phùng Thanh Độ","provinceId":4,"birthDate":"2002-07-14T20:37:27Z","gender":"F","mathMark":5.7,"physicsMark":4.9,"chemistryMark":2.2},
 {"name":"Đệ Văn Toàn","provinceId":17,"birthDate":"2002-09-08T23:11:52Z","gender":"F","mathMark":2.7,"physicsMark":2.4,"chemistryMark":8.7},
 {"name":"Nguyễn Khánh Linh","provinceId":50,"birthDate":"2002-01-11T01:16:49Z","gender":"M","mathMark":9.9,"physicsMark":8.9,"chemistryMark":1.4}]

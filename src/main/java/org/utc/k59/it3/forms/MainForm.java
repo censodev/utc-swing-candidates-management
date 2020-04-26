@@ -22,7 +22,7 @@ public class MainForm {
     private JButton btnDelete;
     private JButton btnCancel;
     private JButton btnEdit;
-    private JButton btnOK;
+    private JButton btnRefresh;
     private JTextField txtIdOutput;
     private JTextField txtName;
     private JTextField txtDate;
@@ -55,7 +55,6 @@ public class MainForm {
         DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
         cmbBirthPlace.setModel(defaultComboBoxModel1);
-        defaultComboBoxModel1.addElement("");
         cmbBirthPlaceOutput.setModel(defaultComboBoxModel2);
         provinceList.stream().map(p -> p.getName()).forEach(ps -> {
             defaultComboBoxModel1.addElement(ps);
@@ -92,51 +91,78 @@ public class MainForm {
                     Integer id = (Integer) ServicesManager.candidateRepository.save(candidate);
 
                     // refresh frame
-                    dataSource = ServicesManager.candidateRepository.getListCandidates();
-                    refreshTable(dataSource);
+                    refreshTable(ServicesManager.candidateRepository.getListCandidates());
+
+                    //Dialog
+                    JOptionPane.showMessageDialog(null,"Đã thêm dữ liệu thành công");
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(null, ex.getMessage());
+                    JOptionPane.showMessageDialog(null,"Hãy nhập thông tin thí sinh cần thêm vào dữ liệu.");
                 }
             }
         });
         btnEdit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // get data from text field
-                String dateString = txtDate.getText();
-                int[] dateArray = Arrays.stream(dateString.split("/")).mapToInt(Integer::valueOf).toArray();
-                LocalDate date = LocalDate.of(dateArray[2], dateArray[1], dateArray[0]);
+                 int rowSelected = table.getSelectedRow();
+                 if(rowSelected == -1) {
+                     JOptionPane.showMessageDialog(null, "Mời chọn thí sinh cần sửa thông tin");
+                 }
+                 
+                 else{
+                         Integer confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn chỉnh sửa thông tin thí sinh ?", "Xác thực", JOptionPane.ERROR_MESSAGE);
+                         if (confirm == JOptionPane.YES_OPTION) {
+                             // get data from text field
+                             String dateString = txtDate.getText();
+                             int[] dateArray = Arrays.stream(dateString.split("/")).mapToInt(Integer::valueOf).toArray();
+                             LocalDate date = LocalDate.of(dateArray[2], dateArray[1], dateArray[0] + 1);
+                             Integer id = (Integer) table.getValueAt(rowSelected, 0);
+                             String name = txtName.getText();
+                             String provinceName = String.valueOf(cmbBirthPlaceOutput.getSelectedItem());
+                             Integer provinceId = ServicesManager.provinceRepository.findByName(provinceName).getId();
+                             Double chemistry = Double.valueOf(txtChemistry.getText());
+                             Double physics = Double.valueOf(txtPhysical.getText());
+                             Double math = Double.valueOf(txtMath.getText());
+                             String gender = reFemale.isSelected() ? Gender.FEMALE : Gender.MALE;
 
-                Integer id = (Integer) table.getValueAt(table.getSelectedRow(), 0);
-                String name = txtName.getText();
-                String provinceName = String.valueOf(cmbBirthPlaceOutput.getSelectedItem());
-                Integer provinceId = ServicesManager.provinceRepository.findByName(provinceName).getId();
-                Double  chemistry = Double.valueOf(txtChemistry.getText());
-                Double  physics = Double.valueOf(txtPhysical.getText());
-                Double  math = Double.valueOf(txtMath.getText());
-                String gender = reFemale.isSelected() ? Gender.FEMALE : Gender.MALE;
+                             // update DB
+                             Candidate candidate = new Candidate();
+                             candidate.setId(id);
+                             candidate.setName(name);
+                             candidate.setMathMark(math);
+                             candidate.setChemistryMark(chemistry);
+                             candidate.setPhysicsMark(physics);
+                             candidate.setProvinceId(provinceId);
+                             candidate.setGender(gender);
+                             candidate.setBirthDate(date);
+                             ServicesManager.candidateRepository.update(candidate);
 
-                // update DB
-                Candidate candidate = new Candidate();
-                candidate.setId(id);
-                candidate.setName(name);
-                candidate.setMathMark(math);
-                candidate.setChemistryMark(chemistry);
-                candidate.setPhysicsMark(physics);
-                candidate.setProvinceId(provinceId);
-                candidate.setGender(gender);
-                candidate.setBirthDate(date);
-                ServicesManager.candidateRepository.update(candidate);
+                             // refresh frame
+                             refreshTable(ServicesManager.candidateRepository.getListCandidates());
+                             CandidateDTO candidateDTO = new CandidateDTO();
+                             candidateDTO.setId(candidate.getId());
+                             candidateDTO.setName(candidate.getName());
+                             candidateDTO.setBirthDate(dateString);
+                             candidateDTO.setProvinceName(provinceName);
+                             candidateDTO.setGender(candidate.getGender());
+                             candidateDTO.setMathMark(candidate.getMathMark());
+                             candidateDTO.setPhysicsMark(candidate.getPhysicsMark());
+                             candidateDTO.setChemistryMark(candidate.getChemistryMark());
+                             candidateDTO.setTotalMark(candidate.getMathMark() + candidate.getPhysicsMark() + candidate.getChemistryMark());
+                             fillCandidateDetails(candidateDTO);
 
-                // refresh frame
-                dataSource = ServicesManager.candidateRepository.getListCandidates();
-                refreshTable(dataSource);
-            }
+                              //Dialog
+                              JOptionPane.showMessageDialog(null,"Đã chỉnh sửa thành công");
+                         }
+                     }
+                 }
         });
-        btnOK.addActionListener(new ActionListener() {
+        btnRefresh.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                List<CandidateDTO>  candidateDTOList= ServicesManager.candidateRepository.getListCandidates() ;
+                refreshTable(candidateDTOList);
+
 
             }
         });
@@ -164,11 +190,9 @@ public class MainForm {
                         candidateDTOList = ServicesManager.candidateRepository.getListCandidates();
 
                     // refresh frame
-                    dataSource = candidateDTOList;
-                    refreshTable(dataSource);
+                    refreshTable(candidateDTOList);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(null, ex.getMessage());
+                    ex.printStackTrace();                       
                 }
             }
         });
@@ -176,19 +200,31 @@ public class MainForm {
         btnDelete.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+
             int rowSelected = table.getSelectedRow();
-            Integer selectedId = (Integer) table.getValueAt(rowSelected,0);
+            if(rowSelected == -1)     {
+                JOptionPane.showMessageDialog(null, " Hãy chọn thí sinh cần xóa .");
 
-            // delete in DB
-            Candidate candidate = ServicesManager.candidateRepository.find(selectedId);
-            ServicesManager.candidateRepository.delete(candidate);
+            }
+              else
+                {
+                     Integer confirm= JOptionPane.showConfirmDialog(null,"Bạn có chắc chắn muốn xóa ?","Xác thực",JOptionPane.ERROR_MESSAGE)  ;
+                     if(confirm == JOptionPane.YES_OPTION)
+                     {
+                          Integer selectedId = (Integer) table.getValueAt(rowSelected,0);
 
-            // refresh frame
-            dataSource = ServicesManager.candidateRepository.getListCandidates();
-            refreshTable(dataSource);
+                          // delete in DB
+                          Candidate candidate = ServicesManager.candidateRepository.find(selectedId);
+                          ServicesManager.candidateRepository.delete(candidate);
 
-            // dialog
-            JOptionPane.showMessageDialog(null,"Đã xóa dữ liệu thành công");
+                          // refresh frame
+                          refreshTable(ServicesManager.candidateRepository.getListCandidates());
+                          fillCandidateDetails(null);
+
+                          // dialog
+                          JOptionPane.showMessageDialog(null,"Đã xóa dữ liệu thành công");
+                     }
+                }
             }
         });
     }
@@ -203,7 +239,13 @@ public class MainForm {
     }
 
     private void renderTable() {
-        defaultTableModel = new DefaultTableModel();
+        defaultTableModel = new DefaultTableModel() {
+                  @Override
+                      public boolean isCellEditable(int row, int column) {
+                         //all cells false
+                         return false;
+                      }
+         }             ;
         table.setModel(defaultTableModel);
         defaultTableModel.addColumn("UID ");
         defaultTableModel.addColumn("NAME");
@@ -233,6 +275,7 @@ public class MainForm {
     }
 
     private void setDataSource(List<CandidateDTO> dataSource) {
+        this.dataSource = dataSource;
         dataSource.forEach(c -> {
             defaultTableModel
                     .addRow(new Object[] {
@@ -243,25 +286,24 @@ public class MainForm {
     }
 
     private void refreshTable(List<CandidateDTO> dataSource) {
-        table.clearSelection();
         defaultTableModel.setRowCount(0);
         setDataSource(dataSource);
     }
 
     private void fillCandidateDetails(CandidateDTO candidateDTO) {
-        txtIdOutput.setText(String.valueOf(candidateDTO.getId()));
-        txtName.setText(String.valueOf(candidateDTO.getName()));
-        txtDate.setText(String.valueOf(candidateDTO.getBirthDate()));
-        txtMath.setText(String.valueOf(candidateDTO.getMathMark()));
-        txtPhysical.setText(String.valueOf(candidateDTO.getPhysicsMark()));
-        txtChemistry.setText(String.valueOf(candidateDTO.getChemistryMark()));
-        txtTotal.setText(String.valueOf((double) Math.round(candidateDTO.getTotalMark() * 10) / 10));
-
-        if (candidateDTO.getGender().equals("F"))
+        txtIdOutput.setText(candidateDTO == null ? "" : String.valueOf(candidateDTO.getId()));
+        txtName.setText(candidateDTO == null ? "" : String.valueOf(candidateDTO.getName()));
+        txtDate.setText(candidateDTO == null ? "" : String.valueOf(candidateDTO.getBirthDate()));
+        txtMath.setText(candidateDTO == null ? "" : String.valueOf(candidateDTO.getMathMark()));
+        txtPhysical.setText(candidateDTO == null ? "" : String.valueOf(candidateDTO.getPhysicsMark()));
+        txtChemistry.setText(candidateDTO == null ? "" : String.valueOf(candidateDTO.getChemistryMark()));
+        txtTotal.setText(candidateDTO == null ? "" : String.valueOf((double) Math.round(candidateDTO.getTotalMark() * 10) / 10));
+        if (candidateDTO == null)  {}
+        else if (candidateDTO.getGender().equals("F"))
             reFemale.setSelected(true);
         else
             rbMale.setSelected(true);
 
-        cmbBirthPlaceOutput.setSelectedItem(candidateDTO.getProvinceName());
+        cmbBirthPlaceOutput.setSelectedItem(candidateDTO == null ? cmbBirthPlaceOutput.getItemAt(0) : candidateDTO.getProvinceName());
     }
 }
