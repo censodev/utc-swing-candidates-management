@@ -3,6 +3,7 @@ package org.utc.k59.it3.forms;
 import org.utc.k59.it3.dto.CandidateDTO;
 import org.utc.k59.it3.models.Candidate;
 import org.utc.k59.it3.models.Province;
+import org.utc.k59.it3.utils.DbSeeder;
 import org.utc.k59.it3.utils.Gender;
 import org.utc.k59.it3.utils.ServicesManager;
 
@@ -11,10 +12,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class MainForm {
     private JPanel mainPanel;
@@ -42,7 +46,7 @@ public class MainForm {
     private List<CandidateDTO> dataSource;
 
     public MainForm() {
-        txtDate.setText("dd/mm/yyyy");
+//        txtDate.setText("dd/mm/yyyy");
 
         ButtonGroup G = new ButtonGroup();
         G.add(reFemale);
@@ -60,7 +64,6 @@ public class MainForm {
             defaultComboBoxModel1.addElement(ps);
             defaultComboBoxModel2.addElement(ps);
         });
-
 
         btnInsert.addActionListener(new ActionListener() {
             @Override
@@ -101,6 +104,7 @@ public class MainForm {
                 }
             }
         });
+
         btnEdit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -157,6 +161,7 @@ public class MainForm {
                      }
                  }
         });
+
         btnRefresh.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -166,6 +171,7 @@ public class MainForm {
 
             }
         });
+
         btnCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -201,15 +207,13 @@ public class MainForm {
             @Override
             public void mouseClicked(MouseEvent e) {
 
-            int rowSelected = table.getSelectedRow();
-            if(rowSelected == -1)     {
-                JOptionPane.showMessageDialog(null, " Hãy chọn thí sinh cần xóa .");
+                int rowSelected = table.getSelectedRow();
+                if(rowSelected == -1)     {
+                    JOptionPane.showMessageDialog(null, " Hãy chọn thí sinh cần xóa .");
 
-            }
-              else
-                {
+                } else {
                      Integer confirm= JOptionPane.showConfirmDialog(null,"Bạn có chắc chắn muốn xóa ?","Xác thực",JOptionPane.ERROR_MESSAGE)  ;
-                     if(confirm == JOptionPane.YES_OPTION)
+                     if (confirm == JOptionPane.YES_OPTION)
                      {
                           Integer selectedId = (Integer) table.getValueAt(rowSelected,0);
 
@@ -229,8 +233,13 @@ public class MainForm {
         });
     }
 
-    public static void main(String[] args) {
-        JFrame frame= new JFrame("Demo");
+    public static void main(String[] args) throws FileNotFoundException {
+        System.setProperty("user.timezone", "Asia/Ho_Chi_Minh");
+        Logger.getGlobal().info(LocalDateTime.now().toString());
+
+        DbSeeder.seedAll();
+
+        JFrame frame= new JFrame("Quản lí thí sinh thi Đại học UTC 2020 v1.5");
         frame.setContentPane(new MainForm().mainPanel);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
@@ -240,12 +249,12 @@ public class MainForm {
 
     private void renderTable() {
         defaultTableModel = new DefaultTableModel() {
-                  @Override
-                      public boolean isCellEditable(int row, int column) {
-                         //all cells false
-                         return false;
-                      }
-         }             ;
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
         table.setModel(defaultTableModel);
         defaultTableModel.addColumn("UID ");
         defaultTableModel.addColumn("NAME");
