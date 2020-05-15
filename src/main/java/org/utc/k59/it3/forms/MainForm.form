@@ -164,7 +164,7 @@
             <border type="none"/>
             <children/>
           </grid>
-          <component id="6ce67" class="javax.swing.JButton" binding="btnCancel">
+          <component id="6ce67" class="javax.swing.JButton" binding="btnAboutus">
             <constraints>
               <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="2" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

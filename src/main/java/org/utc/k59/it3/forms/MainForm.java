@@ -24,7 +24,7 @@ public class MainForm {
     private JPanel mainPanel;
     private JButton btnInsert;
     private JButton btnDelete;
-    private JButton btnCancel;
+    private JButton btnAboutus;
     private JButton btnEdit;
     private JButton btnRefresh;
     private JTextField txtIdOutput;
@@ -72,7 +72,7 @@ public class MainForm {
                     // get data from text field
                     String dateString = txtDate.getText();
                     int[] dateArray = Arrays.stream(dateString.split("/")).mapToInt(Integer::valueOf).toArray();
-                    LocalDate date = LocalDate.of(dateArray[2], dateArray[1], dateArray[0]);
+                    LocalDate date = LocalDate.of(dateArray[2], dateArray[1], dateArray[0] + 1);
 
                     String name = txtName.getText();
                     String provinceName = String.valueOf(cmbBirthPlaceOutput.getSelectedItem());
@@ -172,7 +172,7 @@ public class MainForm {
             }
         });
 
-        btnCancel.addActionListener(new ActionListener() {
+        btnAboutus.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -229,6 +229,18 @@ public class MainForm {
                           JOptionPane.showMessageDialog(null,"Đã xóa dữ liệu thành công");
                      }
                 }
+            }
+        });
+
+        btnAboutus.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame jFrame = new JFrame("About us");
+                jFrame.setContentPane(new AboutForm().Mainframe1);
+                jFrame.pack();
+                jFrame.setSize(450,220);
+                jFrame.setVisible(true);
+                jFrame.setLocationRelativeTo(null);
             }
         });
     }
