@@ -198,6 +198,7 @@ public class MainForm {
                     // refresh frame
                     refreshTable(candidateDTOList);
                 } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null,"Mời nhập lại đúng định dạng mã sinh viên");
                     ex.printStackTrace();                       
                 }
             }
