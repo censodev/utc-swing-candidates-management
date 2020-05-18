@@ -261,42 +261,42 @@ public class MainForm {
     }
 
     private void renderTable() {
-        defaultTableModel = new DefaultTableModel() {
+        try {
+            defaultTableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 //all cells false
                 return false;
-            }
-        };
-        try {
-            table.setModel(defaultTableModel);
-        } catch (Exception ex) {}
-
-        defaultTableModel.addColumn("UID ");
-        defaultTableModel.addColumn("NAME");
-        defaultTableModel.addColumn("PROVINCE");
-        defaultTableModel.addColumn("BIRTH DATE");
-        defaultTableModel.addColumn("GENDER");
-        defaultTableModel.addColumn("MATH");
-        defaultTableModel.addColumn("PHYSICS");
-        defaultTableModel.addColumn("CHEMISTRY");
-        defaultTableModel.addColumn("TOTAL");
-
-        dataSource = ServicesManager.candidateRepository.getListCandidates();
-        setDataSource(dataSource);
-
-        table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                try {
-                    CandidateDTO candidateDTO = dataSource.get(e.getLastIndex());
-                    fillCandidateDetails(candidateDTO);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
                 }
-            }
-        });
+            };
+            table.setModel(defaultTableModel);
+
+            defaultTableModel.addColumn("UID ");
+            defaultTableModel.addColumn("NAME");
+            defaultTableModel.addColumn("PROVINCE");
+            defaultTableModel.addColumn("BIRTH DATE");
+            defaultTableModel.addColumn("GENDER");
+            defaultTableModel.addColumn("MATH");
+            defaultTableModel.addColumn("PHYSICS");
+            defaultTableModel.addColumn("CHEMISTRY");
+            defaultTableModel.addColumn("TOTAL");
+
+            dataSource = ServicesManager.candidateRepository.getListCandidates();
+            setDataSource(dataSource);
+
+            table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+                @Override
+                public void valueChanged(ListSelectionEvent e) {
+                    try {
+                        CandidateDTO candidateDTO = dataSource.get(e.getLastIndex());
+                        fillCandidateDetails(candidateDTO);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception ex) {}
     }
 
     private void setDataSource(List<CandidateDTO> dataSource) {
