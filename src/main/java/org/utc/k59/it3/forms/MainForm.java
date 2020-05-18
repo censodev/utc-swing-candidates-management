@@ -267,7 +267,10 @@ public class MainForm {
                 return false;
             }
         };
-        table.setModel(defaultTableModel);
+        try {
+            table.setModel(defaultTableModel);
+        } catch (Exception ex) {}
+
         defaultTableModel.addColumn("UID ");
         defaultTableModel.addColumn("NAME");
         defaultTableModel.addColumn("PROVINCE");

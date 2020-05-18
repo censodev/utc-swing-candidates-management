@@ -143,7 +143,7 @@
             <properties>
               <foreground color="-16777216"/>
               <text value="Insert"/>
-              <toolTipText value="ấn zô đây để nhận quà"/>
+              <toolTipText value=""/>
             </properties>
           </component>
           <component id="738e" class="javax.swing.JButton" binding="btnRefresh">
