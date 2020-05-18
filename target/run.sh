@@ -1,0 +1,1 @@
+java -jar CandidatesManagement-1.5.jar
