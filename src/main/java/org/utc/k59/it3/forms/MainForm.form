@@ -64,7 +64,7 @@
         <properties>
           <background color="-12503016"/>
           <foreground color="-16777216"/>
-          <text value="Student Filtre"/>
+          <text value="Student Filter"/>
         </properties>
       </component>
       <component id="a2f79" class="javax.swing.JLabel">
